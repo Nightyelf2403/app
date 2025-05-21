@@ -2,21 +2,23 @@ import express from 'express';
 import axios from 'axios';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import mongoose from 'mongoose';
 import weatherRoutes from './routes/api/records.js';
 import WeatherRecord from './models/WeatherRecord.js';
 
-
 dotenv.config();
+
 const app = express();
+const PORT = process.env.PORT || 5000;
+const API_KEY = process.env.OPENWEATHER_API_KEY;
+const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
+
+// ✅ Middleware
 app.use(cors());
 app.use(express.json());
 app.use('/api/records', weatherRoutes);
 
-
-const PORT = process.env.PORT || 5000;
-const API_KEY = process.env.OPENWEATHER_API_KEY;
-
-// 🌍 Root route for direct browser visit
+// 🌍 Root
 app.get('/', (req, res) => {
   res.send(`
     <h2>🌤️ Weather API is Live</h2>
@@ -24,36 +26,27 @@ app.get('/', (req, res) => {
   `);
 });
 
-// 📡 Main weather API route
+// 📡 Weather + 5-day forecast
 app.get('/api/weather', async (req, res) => {
   const city = req.query.city;
-  if (!city) {
-    return res.status(400).json({ error: 'City name is required.' });
-  }
+  if (!city) return res.status(400).json({ error: 'City name is required.' });
 
   try {
-    // Fetch current weather
-    const currentWeatherRes = await axios.get(
+    const current = await axios.get(
       `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`
     );
-    const weatherData = currentWeatherRes.data;
-
-    // Fetch 5-day forecast
-    const forecastRes = await axios.get(
+    const forecastRaw = await axios.get(
       `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric`
     );
 
-    // Filter every 8th item for daily forecast (3-hour intervals * 8 = 24 hrs)
-    const forecastData = forecastRes.data.list.filter((_, i) => i % 8 === 0).slice(0, 5);
-
-    const forecast = forecastData.map(item => ({
+    const weatherData = current.data;
+    const forecast = forecastRaw.data.list.filter((_, i) => i % 8 === 0).slice(0, 5).map(item => ({
       date: item.dt_txt,
       temp: item.main.temp,
       condition: capitalizeFirstLetter(item.weather[0].description),
       icon: item.weather[0].icon
     }));
 
-    // Final response
     res.json({
       location: weatherData.name,
       country: weatherData.sys.country,
@@ -62,66 +55,74 @@ app.get('/api/weather', async (req, res) => {
       icon: weatherData.weather[0].icon,
       timestamp: weatherData.dt,
       timezone: weatherData.timezone,
-      forecast: forecast
+      forecast
     });
   } catch (error) {
-    if (error.response && error.response.status === 404) {
-      res.status(404).json({ error: 'City not found. Please try again.' });
+    console.error("Weather error:", error.message);
+    if (error.response?.status === 404) {
+      res.status(404).json({ error: 'City not found' });
     } else {
-      res.status(500).json({ error: 'Could not fetch weather data.' });
+      res.status(500).json({ error: 'Could not fetch weather' });
     }
   }
 });
 
-// ✨ Capitalize first letter of condition
-function capitalizeFirstLetter(text) {
-  return text.charAt(0).toUpperCase() + text.slice(1);
-}
-import { google } from 'googleapis';
-
-const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
-
+// 📹 YouTube videos
 app.get('/api/youtube', async (req, res) => {
   const city = req.query.city;
-  if (!city) {
-    return res.status(400).json({ error: 'City is required' });
-  }
+  if (!city) return res.status(400).json({ error: 'City is required' });
 
   try {
-    const youtube = google.youtube({
-      version: 'v3',
-      auth: YOUTUBE_API_KEY
+    const yt = await axios.get(`https://www.googleapis.com/youtube/v3/search`, {
+      params: {
+        part: 'snippet',
+        q: `${city} travel`,
+        key: YOUTUBE_API_KEY,
+        maxResults: 5,
+        type: 'video'
+      }
     });
 
-    const response = await youtube.search.list({
-      part: 'snippet',
-      q: `${city} travel`,
-      maxResults: 5,
-      type: 'video'
-    });
-
-    const results = response.data.items.map(item => ({
+    const videos = yt.data.items.map(item => ({
       title: item.snippet.title,
       videoId: item.id.videoId,
       thumbnail: item.snippet.thumbnails.medium.url
     }));
 
-    res.json(results);
+    res.json(videos);
   } catch (err) {
-    console.error("YouTube API Error:", err);
-    res.status(500).json({ error: 'Failed to fetch videos' });
+    console.error("YouTube API error:", err.message);
+    res.status(500).json({ error: 'Failed to fetch YouTube videos' });
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`✅ Backend running on port ${PORT}`);
-});
+// ✨ Capitalize helper
+function capitalizeFirstLetter(text) {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
 
-import mongoose from 'mongoose';
-
+// ✅ MongoDB
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }).then(() => console.log("✅ MongoDB connected"))
   .catch(err => console.error("❌ MongoDB error:", err));
 
+// ✅ Start
+app.listen(PORT, () => {
+  console.log(`✅ Backend running on port ${PORT}`);
+});
+
+const mapFrame = `
+  <iframe
+    width="100%"
+    height="100%"
+    style="border:0"
+    loading="lazy"
+    allowfullscreen
+    referrerpolicy="no-referrer-when-downgrade"
+    src="https://www.google.com/maps/embed/v1/place?key=AIzaSyAsMJvxZ0svpk_D5eSQqMeiap3_GLNPSoI&q=${encodeURIComponent(data.location)}">
+  </iframe>
+`;
+document.getElementById("mapDisplay").innerHTML = mapFrame;
+document.getElementById("mapDisplay").classList.remove("hidden");

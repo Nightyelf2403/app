@@ -119,3 +119,9 @@ function convertToLocalTime(dateString, timezoneOffset = 0) {
 function loadTopCities() {
   citySuggestions.slice(0, 7).forEach(city => fetchWeather(city, false));
 }
+
+// 🌗 Dark mode toggle
+document.getElementById('themeToggle').addEventListener('change', () => {
+  document.body.classList.toggle('dark');
+});
+

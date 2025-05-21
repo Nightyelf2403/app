@@ -29,14 +29,14 @@ app.get('/api/weather', async (req, res) => {
     const weatherData = response.data;
 
     res.json({
-      location: weatherData.name,
-      country: weatherData.sys.country,
-      temperature: weatherData.main.temp,
-      condition: capitalizeFirstLetter(weatherData.weather[0].description),
-      icon: weatherData.weather[0].icon,
-      date: new Date().toISOString(),
-      timezone: weatherData.timezone
-    });
+  location: weatherData.name,
+  country: weatherData.sys.country,
+  temperature: weatherData.main.temp,
+  condition: capitalizeFirstLetter(weatherData.weather[0].description),
+  icon: weatherData.weather[0].icon,
+  timestamp: weatherData.dt,            
+  timezone: weatherData.timezone
+});
   } catch (error) {
     res.status(500).json({ error: 'Could not fetch weather data.' });
   }

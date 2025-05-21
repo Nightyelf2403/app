@@ -28,6 +28,7 @@ app.get('/api/weather', async (req, res) => {
       location: weatherData.name,
       temperature: weatherData.main.temp,
       condition: weatherData.weather[0].description,
+      icon: weatherData.weather[0].icon,
       date: new Date().toISOString(),
       timezone,
     });

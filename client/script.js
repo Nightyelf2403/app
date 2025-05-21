@@ -139,3 +139,19 @@ function showError(message) {
   document.getElementById('weatherDisplay').innerHTML = `<div class="error-msg">${message}</div>`;
   document.getElementById('forecastDisplay').innerHTML = "";
 }
+
+async function fetchYoutube(city) {
+  const res = await fetch(`/api/youtube?city=${city}`);
+  const data = await res.json();
+
+  const videoSection = document.getElementById('youtubeVideos');
+  videoSection.innerHTML = data.map(video => `
+    <div class="video">
+      <a href="https://www.youtube.com/watch?v=${video.videoId}" target="_blank">
+        <img src="${video.thumbnail}" alt="${video.title}" />
+        <p>${video.title}</p>
+      </a>
+    </div>
+  `).join('');
+}
+

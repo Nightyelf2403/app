@@ -2,18 +2,22 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Weather App</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
   <div class="container">
-    <h1>☀️ Weather App</h1>
+    <h1>🌤️ Weather App</h1>
     <form id="weatherForm">
       <input type="text" id="cityInput" placeholder="Enter city name" required />
       <button type="submit">Get Weather</button>
     </form>
+
     <div id="weatherDisplay" class="card hidden"></div>
+
+    <h2 class="section-title">Top Cities</h2>
+    <div id="topCities" class="top-cities-grid"></div>
   </div>
 
   <script src="script.js"></script>

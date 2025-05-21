@@ -66,9 +66,15 @@ async function fetchWeather(city, updateMain = false) {
 function convertToLocalTime(dateString, timezoneOffset = 0) {
   const utcDate = new Date(dateString);
   const localTime = new Date(utcDate.getTime() + timezoneOffset * 1000);
-  return localTime.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true }) +
-         ` (${localTime.toLocaleDateString()})`;
+  return localTime.toLocaleString('en-US', {
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    hour12: true,
+    timeZone: 'UTC',
+  });
 }
+
 
 function loadTopCities() {
   citySuggestions.slice(0, 7).forEach(city => fetchWeather(city, false));

@@ -1,127 +1,127 @@
+:root {
+  --bg: #f0f8ff;
+  --text: #222;
+  --card: rgba(255, 255, 255, 0.9);
+  --accent: #0077b6;
+}
+
+body.dark {
+  --bg: #121212;
+  --text: #f5f5f5;
+  --card: rgba(30, 30, 30, 0.9);
+  --accent: #00b4d8;
+}
+
 body {
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(to bottom, #a0d8ef, #ffffff);
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: 100vh;
-  padding-top: 40px;
+  background-color: var(--bg);
+  color: var(--text);
+  transition: background 0.3s, color 0.3s;
 }
 
-.container {
-  text-align: center;
-  width: 90%;
-  max-width: 600px;
-  background-color: rgba(255, 255, 255, 0.95);
+.app-container {
+  max-width: 800px;
+  margin: auto;
   padding: 2rem;
-  border-radius: 20px;
-  box-shadow: 0 0 18px rgba(0, 0, 0, 0.15);
+  text-align: center;
 }
 
-h1 {
-  margin-bottom: 1rem;
-  font-size: 2rem;
-  color: #222;
-}
-
-form {
+header {
   display: flex;
-  gap: 10px;
-  justify-content: center;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
 }
 
 input[type="text"], input[list] {
+  width: 70%;
   padding: 10px;
-  width: 65%;
-  border: 1px solid #ccc;
-  border-radius: 8px;
   font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
 }
 
 button {
   padding: 10px 20px;
-  background-color: #0077b6;
-  color: white;
+  background-color: var(--accent);
+  color: #fff;
   border: none;
   border-radius: 8px;
+  font-weight: bold;
   cursor: pointer;
-  transition: background 0.3s ease;
+  margin-left: 10px;
 }
 
 button:hover {
-  background-color: #023e8a;
+  background-color: darken(var(--accent), 10%);
 }
 
-.card {
-  background-color: #f8f9fa;
-  padding: 1.2rem;
-  border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  color: #333;
-  margin-top: 1rem;
+.card, .weather-card {
+  margin: 1rem auto;
+  background-color: var(--card);
+  padding: 1rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  max-width: 90%;
+  animation: fadeIn 0.5s ease-in-out;
 }
 
-.hidden {
-  display: none;
+.weather-card {
+  background-size: cover;
+  background-position: center;
+  color: white;
+  text-shadow: 1px 1px 5px #000;
+  position: relative;
+}
+
+.weather-card .overlay {
+  background-color: rgba(0,0,0,0.5);
+  padding: 1rem;
+  border-radius: 16px;
+}
+
+.weather-card img {
+  width: 60px;
+  height: 60px;
 }
 
 .section-title {
   margin-top: 2rem;
-  margin-bottom: 1rem;
-  font-size: 1.25rem;
-  color: #333;
+  font-size: 1.3rem;
+  color: var(--text);
 }
 
 .top-cities-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 1rem;
-  margin-top: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
 }
 
-.top-cities-grid .card {
-  padding: 0.8rem;
-  font-size: 0.9rem;
-}
-
-
-@media screen and (max-width: 768px) {
-  .container {
-    padding: 1.2rem;
-    border-radius: 10px;
-  }
-
-  h1 {
-    font-size: 1.5rem;
-  }
-
+@media (max-width: 600px) {
   input[type="text"] {
     width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   button {
     width: 100%;
   }
-
-  form {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .top-cities-grid {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  }
 }
 
-@media screen and (max-width: 480px) {
-  .card, .weather-card {
-    font-size: 0.85rem;
-  }
-
-  .weather-card img {
-    width: 40px;
-  }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }

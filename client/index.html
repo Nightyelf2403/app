@@ -16,32 +16,40 @@
       </label>
     </header>
 
-    <!-- Weather Search Form -->
+    <!-- Search -->
     <form id="weatherForm" autocomplete="off">
       <input list="citySuggestions" id="cityInput" placeholder="Search city..." required />
       <datalist id="citySuggestions"></datalist>
       <button type="submit">Get Weather</button>
     </form>
 
-    <!-- Main Weather Section -->
+    <!-- Results Area -->
     <main>
+      <!-- Current Weather -->
       <section id="weatherDisplay" class="card hidden"></section>
-      <div id="forecastDisplay" class="forecast-container"></div>
-      <div id="mapDisplay" class="map-container hidden"></div>
 
-      <!-- Top Cities Weather -->
-      <h2 class="section-title">🌍 Top Cities Weather</h2>
-      <p class="subtitle">Live conditions from around the world</p>
-      <section id="topCities" class="top-cities-grid"></section>
+      <!-- Hourly + 5-Day Forecast -->
+      <div id="forecastDisplay" class="forecast-container"></div>
+
+      <!-- Map -->
+      <div id="mapDisplay" class="map-container hidden" style="margin-top: 2rem;"></div>
 
       <!-- YouTube Section -->
       <div id="youtubeVideos" class="youtube-section"></div>
+
+      <!-- Top Cities (shown only initially) -->
+      <h2 class="section-title">🌍 Top Cities Weather</h2>
+      <p class="subtitle">Live conditions from around the world</p>
+      <section id="topCities" class="top-cities-grid"></section>
     </main>
   </div>
 
   <!-- Footer -->
   <footer class="footer">
-    Developed with ❤️ by <a href="https://github.com/Nightyelf2403" target="_blank"><strong>Lalith Aditya Chunduri</strong></a>
+    Developed with ❤️ by
+    <a href="https://github.com/Nightyelf2403" target="_blank">
+      <strong>Lalith Aditya Chunduri</strong>
+    </a>
   </footer>
 
   <script src="script.js"></script>

@@ -34,12 +34,24 @@ app.get('/api/weather', async (req, res) => {
       date: new Date()
     };
 
+    const timezone = weatherData.timezone; // in seconds
+
+res.json({
+  location,
+  temperature,
+  condition,
+  date: new Date(),
+  timezone, 
+});
+
     const saved = await Weather.create(weatherData);
     res.json(saved);
   } catch (error) {
     res.status(500).send('Error fetching weather');
   }
 });
+
+
 
 // Get weather history
 app.get('/api/history', async (req, res) => {

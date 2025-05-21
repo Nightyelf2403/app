@@ -4,9 +4,8 @@ const citySuggestions = [
   "New York", "London", "Tokyo", "Paris", "Mumbai",
   "Dubai", "Sydney", "Berlin", "Singapore", "Moscow", "Chicago"
 ];
-const time = convertToLocalTime(data.date, data.timezone);
 
-// populate datalist for suggestions
+// Populate datalist for suggestions
 const suggestionList = document.getElementById("citySuggestions");
 citySuggestions.forEach(city => {
   const opt = document.createElement("option");
@@ -72,12 +71,9 @@ function convertToLocalTime(dateString, timezoneOffset = 0) {
     minute: 'numeric',
     second: 'numeric',
     hour12: true,
-    timeZone: 'UTC',
   });
 }
-
 
 function loadTopCities() {
   citySuggestions.slice(0, 7).forEach(city => fetchWeather(city, false));
 }
-

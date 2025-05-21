@@ -1,6 +1,17 @@
 const backendURL = "https://app-jvpd.onrender.com/api/weather";
+const OPENWEATHER_API_KEY = "36ffc6ea6c048bb0fcc1752338facd48"; // Replace with your OpenWeatherMap key
+const citySuggestions = [
+  "New York", "London", "Tokyo", "Paris", "Mumbai",
+  "Dubai", "Sydney", "Berlin", "Singapore", "Moscow", "Chicago"
+];
 
-const topCities = ['London', 'New York', 'Tokyo', 'Paris', 'Mumbai', 'Sydney', 'Dubai'];
+// populate datalist for suggestions
+const suggestionList = document.getElementById("citySuggestions");
+citySuggestions.forEach(city => {
+  const opt = document.createElement("option");
+  opt.value = city;
+  suggestionList.appendChild(opt);
+});
 
 document.getElementById('weatherForm').addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -10,14 +21,13 @@ document.getElementById('weatherForm').addEventListener('submit', async (e) => {
   }
 });
 
-// On page load: use geolocation
 window.onload = () => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(async (position) => {
       const { latitude, longitude } = position.coords;
-      const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=‎36ffc6ea6c048bb0fcc1752338facd48`);
-      const data = await res.json();
-      fetchWeather(data.name, true);
+      const geoRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${OPENWEATHER_API_KEY}`);
+      const geoData = await geoRes.json();
+      fetchWeather(geoData.name, true);
     });
   }
 
@@ -29,7 +39,7 @@ async function fetchWeather(city, updateMain = false) {
     const res = await fetch(`${backendURL}?city=${city}`);
     const data = await res.json();
 
-    const time = convertToLocalTime(data.date, data.timezone); // Add timezone later
+    const time = convertToLocalTime(data.date, data.timezone);
 
     const html = `
       <h2>${data.location}</h2>
@@ -49,16 +59,18 @@ async function fetchWeather(city, updateMain = false) {
     }
 
   } catch (error) {
-    console.error("Error fetching weather:", error);
+    console.error("Weather fetch error:", error);
   }
 }
 
 function convertToLocalTime(dateString, timezoneOffset = 0) {
   const utcDate = new Date(dateString);
-  const localDate = new Date(utcDate.getTime() + timezoneOffset * 1000);
-  return localDate.toLocaleString('en-US', { timeZone: 'UTC' });
+  const localTime = new Date(utcDate.getTime() + timezoneOffset * 1000);
+  return localTime.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true }) +
+         ` (${localTime.toLocaleDateString()})`;
 }
 
 function loadTopCities() {
-  topCities.forEach(city => fetchWeather(city, false));
+  citySuggestions.slice(0, 7).forEach(city => fetchWeather(city, false));
 }
+

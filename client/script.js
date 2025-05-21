@@ -49,16 +49,12 @@ document.getElementById('weatherForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   const city = cityInput.value.trim();
   if (city) {
-    document.getElementById("topCities").style.display = "none";
-    document.querySelector(".section-title").style.display = "none";
-    document.querySelector(".subtitle").style.display = "none";
-
     fetchWeather(city, true);
     fetchYouTubeVideos(city);
   }
 });
 
-// 🌍 Detect user location and show weather
+// 🌍 Detect user location and show top cities
 window.onload = () => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(async (position) => {
@@ -83,10 +79,17 @@ async function fetchWeather(city, updateMain = false) {
       return;
     }
 
+    // ⛔ Hide top cities when searching
+    if (updateMain) {
+      document.getElementById("topCities").style.display = "none";
+      document.querySelector(".section-title").style.display = "none";
+      document.querySelector(".subtitle").style.display = "none";
+    }
+
     const iconURL = `https://openweathermap.org/img/wn/${data.icon}@2x.png`;
     const imageURL = `https://source.unsplash.com/400x300/?city,${data.location}`;
 
-    const html = `
+    const currentHTML = `
       <div class="weather-card" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('${imageURL}')">
         <div class="overlay">
           <h2>${data.location}</h2>
@@ -98,33 +101,38 @@ async function fetchWeather(city, updateMain = false) {
     `;
 
     if (updateMain) {
-      document.getElementById('weatherDisplay').innerHTML = html;
+      document.getElementById('weatherDisplay').innerHTML = currentHTML;
       document.getElementById('weatherDisplay').classList.remove('hidden');
-    } else {
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.innerHTML = html;
-      document.getElementById('topCities').appendChild(card);
     }
 
-    // 🌤️ Forecast display
-    if (updateMain && data.forecast && Array.isArray(data.forecast)) {
-      const forecastHTML = data.forecast.map(day => `
-        <div class="forecast-card">
-          <p><strong>${new Date(day.date).toLocaleDateString('en-US', { weekday: 'short' })}</strong></p>
-          <img src="https://openweathermap.org/img/wn/${day.icon}@2x.png" alt="${day.condition}" />
-          <p>${Math.round(day.temp)} °C</p>
-          <p>${day.condition}</p>
-        </div>
-      `).join("");
+    // 🕒 Hourly forecast (today only)
+    const hourlyToday = data.forecast?.slice(0, 4).map(item => `
+      <div class="forecast-card">
+        <p><strong>${new Date(item.date).getHours()}:00</strong></p>
+        <img src="https://openweathermap.org/img/wn/${item.icon}@2x.png" alt="${item.condition}" />
+        <p>${Math.round(item.temp)} °C</p>
+        <p>${item.condition}</p>
+      </div>
+    `).join("");
 
-      document.getElementById("forecastDisplay").innerHTML = `
-        <h3>5-Day Forecast</h3>
-        <div class="forecast-grid">${forecastHTML}</div>
-      `;
-    }
+    // 📅 5-day forecast (skip first)
+    const daily = data.forecast?.slice(1).map(day => `
+      <div class="forecast-card">
+        <p><strong>${new Date(day.date).toLocaleDateString('en-US', { weekday: 'short' })}</strong></p>
+        <img src="https://openweathermap.org/img/wn/${day.icon}@2x.png" alt="${day.condition}" />
+        <p>${Math.round(day.temp)} °C</p>
+        <p>${day.condition}</p>
+      </div>
+    `).join("");
 
-    // 🗺️ Load Google Map
+    document.getElementById("forecastDisplay").innerHTML = `
+      <h3>Today's Hourly</h3>
+      <div class="forecast-grid">${hourlyToday}</div>
+      <h3>5-Day Forecast</h3>
+      <div class="forecast-grid">${daily}</div>
+    `;
+
+    // 🗺️ Google Map
     const mapFrame = `
       <iframe
         width="100%"
@@ -170,19 +178,21 @@ async function fetchYouTubeVideos(city) {
   }
 }
 
-// 🏙️ Load top 7 cities on page load
+// 🏙️ Load Top Cities
 function loadTopCities() {
+  document.getElementById("topCities").style.display = "grid";
   citySuggestions.slice(0, 7).forEach(city => fetchWeather(city, false));
 }
 
-// 🌗 Dark mode toggle
+// 🌗 Toggle dark mode
 document.getElementById('themeToggle').addEventListener('change', () => {
   document.body.classList.toggle('dark');
 });
 
-// ❌ Error display
+// ❌ Show error message
 function showError(message) {
   document.getElementById('weatherDisplay').innerHTML = `<div class="error-msg">${message}</div>`;
   document.getElementById('forecastDisplay').innerHTML = "";
-  document.getElementById("topCities").style.display = "none";
+  document.getElementById('mapDisplay').innerHTML = "";
+  document.getElementById('youtubeVideos').innerHTML = "";
 }

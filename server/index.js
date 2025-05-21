@@ -77,6 +77,41 @@ app.get('/api/weather', async (req, res) => {
 function capitalizeFirstLetter(text) {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
+import { google } from 'googleapis';
+
+const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
+
+app.get('/api/youtube', async (req, res) => {
+  const city = req.query.city;
+  if (!city) {
+    return res.status(400).json({ error: 'City is required' });
+  }
+
+  try {
+    const youtube = google.youtube({
+      version: 'v3',
+      auth: YOUTUBE_API_KEY
+    });
+
+    const response = await youtube.search.list({
+      part: 'snippet',
+      q: `${city} travel`,
+      maxResults: 5,
+      type: 'video'
+    });
+
+    const results = response.data.items.map(item => ({
+      title: item.snippet.title,
+      videoId: item.id.videoId,
+      thumbnail: item.snippet.thumbnails.medium.url
+    }));
+
+    res.json(results);
+  } catch (err) {
+    console.error("YouTube API Error:", err);
+    res.status(500).json({ error: 'Failed to fetch videos' });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`✅ Backend running on port ${PORT}`);

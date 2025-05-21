@@ -75,3 +75,13 @@ function capitalizeFirstLetter(text) {
 app.listen(PORT, () => {
   console.log(`✅ Backend running on port ${PORT}`);
 });
+
+import mongoose from 'mongoose';
+import WeatherRecord from './models/WeatherRecord.js';
+
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}).then(() => console.log("✅ MongoDB connected"))
+  .catch(err => console.error("❌ MongoDB error:", err));
+

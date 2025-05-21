@@ -1,1 +1,37 @@
+/* 📁 client/style.css */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(to bottom, #6dd5fa, #ffffff);
+  text-align: center;
+}
+
+.container {
+  margin-top: 50px;
+}
+
+input, button {
+  padding: 10px;
+  font-size: 16px;
+  margin: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+#weatherDisplay {
+  margin-top: 20px;
+  font-size: 18px;
+  background-color: rgba(255,255,255,0.7);
+  display: inline-block;
+  padding: 10px;
+  border-radius: 10px;
+  max-width: 90%;
+}
+
+@media (max-width: 600px) {
+  input, button {
+    width: 80%;
+  }
+}
 

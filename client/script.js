@@ -3,7 +3,7 @@ async function fetchWeather() {
   const city = document.getElementById('cityInput').value;
   if (!city) return alert("Enter a city name");
 
-  const res = await fetch(`http://localhost:5000/api/weather?city=${city}`);
+  const res = await fetch(`https://app-jvpd.onrender.com/api/weather?city=${city}`);
   const data = await res.json();
 
   document.getElementById('weatherDisplay').innerHTML = `
@@ -13,4 +13,5 @@ async function fetchWeather() {
     <p>Time: ${new Date(data.date).toLocaleString()}</p>
   `;
 }
+
 

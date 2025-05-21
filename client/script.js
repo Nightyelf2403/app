@@ -1,12 +1,16 @@
 const backendURL = "https://app-jvpd.onrender.com/api/weather";
 const OPENWEATHER_API_KEY = "36ffc6ea6c048bb0fcc1752338facd48";
 const RAPIDAPI_KEY = "7f735282efmshce0eccb67be20bdp13e90cjsn552d58dcfa0e";
-const citySuggestions = ["New York", "London", "Tokyo", "Paris", "Mumbai", "Dubai", "Sydney", "Berlin", "Singapore", "Moscow", "Chicago"];
+
+const citySuggestions = [
+  "New York", "London", "Tokyo", "Paris", "Mumbai",
+  "Dubai", "Sydney", "Berlin", "Singapore", "Moscow", "Chicago"
+];
 
 const cityInput = document.getElementById("cityInput");
 const datalist = document.getElementById("citySuggestions");
 
-// Fetch GeoDB city suggestions as you type
+// 🔍 Autocomplete city suggestions from GeoDB
 cityInput.addEventListener("input", async () => {
   const query = cityInput.value.trim();
   if (query.length < 2) return;
@@ -20,20 +24,26 @@ cityInput.addEventListener("input", async () => {
   };
 
   try {
-    const response = await fetch(`https://wft-geo-db.p.rapidapi.com/v1/geo/cities?namePrefix=${query}&limit=5`, options);
+    const response = await fetch(
+      `https://wft-geo-db.p.rapidapi.com/v1/geo/cities?namePrefix=${query}&limit=5&sort=-population`,
+      options
+    );
     const data = await response.json();
 
-    datalist.innerHTML = "";
-    data.data.forEach(city => {
-      const option = document.createElement("option");
-      option.value = city.city;
-      datalist.appendChild(option);
-    });
+    if (data.data && data.data.length > 0) {
+      datalist.innerHTML = "";
+      data.data.forEach(city => {
+        const option = document.createElement("option");
+        option.value = `${city.city}, ${city.countryCode}`;
+        datalist.appendChild(option);
+      });
+    }
   } catch (err) {
     console.error("GeoDB autocomplete error:", err);
   }
 });
 
+// 📥 Handle form submission
 document.getElementById('weatherForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   const city = cityInput.value.trim();
@@ -42,6 +52,7 @@ document.getElementById('weatherForm').addEventListener('submit', async (e) => {
   }
 });
 
+// 🌍 Detect user location and show weather
 window.onload = () => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(async (position) => {
@@ -55,9 +66,10 @@ window.onload = () => {
   loadTopCities();
 };
 
+// 🌦️ Fetch weather and display in card
 async function fetchWeather(city, updateMain = false) {
   try {
-    const res = await fetch(`${backendURL}?city=${city}`);
+    const res = await fetch(`${backendURL}?city=${encodeURIComponent(city)}`);
     const data = await res.json();
 
     const time = convertToLocalTime(data.date, data.timezone);
@@ -91,6 +103,7 @@ async function fetchWeather(city, updateMain = false) {
   }
 }
 
+// ⏰ Convert UTC + offset to local time string
 function convertToLocalTime(dateString, timezoneOffset = 0) {
   const utcDate = new Date(dateString);
   const localTime = new Date(utcDate.getTime() + timezoneOffset * 1000);
@@ -102,6 +115,7 @@ function convertToLocalTime(dateString, timezoneOffset = 0) {
   });
 }
 
+// 🏙️ Load top 7 cities on page load
 function loadTopCities() {
   citySuggestions.slice(0, 7).forEach(city => fetchWeather(city, false));
 }

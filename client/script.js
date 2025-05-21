@@ -76,15 +76,16 @@ async function fetchWeather(city, updateMain = false) {
     const imageURL = `https://source.unsplash.com/400x300/?city,${data.location}`;
 
     const html = `
-      <div class="weather-card" style="background-image: url('${imageURL}');">
-        <div class="overlay">
-          <h2>${data.location}</h2>
-          <img src="${iconURL}" alt="${data.condition}" />
-          <p><strong>Temperature:</strong> ${data.temperature} °C</p>
-          <p><strong>Condition:</strong> ${data.condition}</p>
-        </div>
-      </div>
-    `;
+  <div class="weather-card" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('${imageURL}')">
+    <div class="overlay">
+      <h2>${data.location}</h2>
+      <img src="${iconURL}" alt="${data.condition}" />
+      <p>🌡️ <strong>${data.temperature} °C</strong></p>
+      <p>🌥️ <strong>${data.condition}</strong></p>
+    </div>
+  </div>
+`;
+
 
     if (updateMain) {
       document.getElementById('weatherDisplay').innerHTML = html;

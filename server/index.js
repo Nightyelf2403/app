@@ -83,7 +83,6 @@ app.listen(PORT, () => {
 });
 
 import mongoose from 'mongoose';
-import WeatherRecord from './models/WeatherRecord.js';
 
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,

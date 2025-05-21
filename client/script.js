@@ -72,7 +72,7 @@ async function fetchWeather(city, updateMain = false) {
     const res = await fetch(`${backendURL}?city=${encodeURIComponent(city)}`);
     const data = await res.json();
 
-    const time = convertToLocalTime(data.date, data.timezone);
+    const time = convertToLocalTimeFromUnix(data.timestamp, data.timezone);
     const iconURL = `https://openweathermap.org/img/wn/${data.icon}@2x.png`;
     const imageURL = `https://source.unsplash.com/400x300/?city,${data.location}`;
 
@@ -103,15 +103,19 @@ async function fetchWeather(city, updateMain = false) {
   }
 }
 
-// ⏰ Convert UTC + offset to local time string
-function convertToLocalTime(dateString, timezoneOffset = 0) {
-  const utcDate = new Date(dateString);
-  const localTime = new Date(utcDate.getTime() + timezoneOffset * 1000);
+
+
+function convertToLocalTimeFromUnix(unixTime, timezoneOffset) {
+  const utcMillis = unixTime * 1000;
+  const localTime = new Date(utcMillis + timezoneOffset * 1000);
   return localTime.toLocaleString('en-US', {
     hour: 'numeric',
     minute: 'numeric',
     second: 'numeric',
     hour12: true,
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short'
   });
 }
 

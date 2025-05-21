@@ -48,31 +48,14 @@ document.getElementById('weatherForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   const city = cityInput.value.trim();
   if (city) {
+    document.getElementById("topCities").style.display = "none"; // hide top cities
+    document.querySelector(".section-title").style.display = "none";
+    document.querySelector(".subtitle").style.display = "none";
+
     fetchWeather(city, true);
     fetchYouTubeVideos(city);
-
   }
 });
-
-async function fetchYouTubeVideos(city) {
-  try {
-    const res = await fetch(`https://app-jvpd.onrender.com/api/youtube?city=${city}`);
-    const videos = await res.json();
-
-    const container = document.getElementById("youtubeVideos");
-    container.innerHTML = videos.map(video => `
-      <div class="yt-video">
-        <a href="https://www.youtube.com/watch?v=${video.videoId}" target="_blank">
-          <img src="${video.thumbnail}" alt="${video.title}" />
-          <p>${video.title}</p>
-        </a>
-      </div>
-    `).join("");
-  } catch (err) {
-    console.error("YouTube fetch failed", err);
-  }
-}
-
 
 // 🌍 Detect user location and show weather
 window.onload = () => {
@@ -88,7 +71,7 @@ window.onload = () => {
   loadTopCities();
 };
 
-// 🌦️ Fetch weather and display in card (with forecast)
+// 🌦️ Fetch weather and display in card
 async function fetchWeather(city, updateMain = false) {
   try {
     const res = await fetch(`${backendURL}?city=${encodeURIComponent(city)}`);
@@ -146,6 +129,31 @@ async function fetchWeather(city, updateMain = false) {
   }
 }
 
+// 📹 Fetch YouTube Videos
+async function fetchYouTubeVideos(city) {
+  try {
+    const res = await fetch(`https://app-jvpd.onrender.com/api/youtube?city=${encodeURIComponent(city)}`);
+    const videos = await res.json();
+
+    const container = document.getElementById("youtubeVideos");
+    container.innerHTML = `
+      <h3>YouTube Travel Videos</h3>
+      <div class="youtube-section">
+        ${videos.map(video => `
+          <div class="yt-video">
+            <a href="https://www.youtube.com/watch?v=${video.videoId}" target="_blank">
+              <img src="${video.thumbnail}" alt="${video.title}" />
+              <p>${video.title}</p>
+            </a>
+          </div>
+        `).join("")}
+      </div>
+    `;
+  } catch (err) {
+    console.error("YouTube fetch failed", err);
+  }
+}
+
 // 🏙️ Load top 7 cities on page load
 function loadTopCities() {
   citySuggestions.slice(0, 7).forEach(city => fetchWeather(city, false));
@@ -160,20 +168,5 @@ document.getElementById('themeToggle').addEventListener('change', () => {
 function showError(message) {
   document.getElementById('weatherDisplay').innerHTML = `<div class="error-msg">${message}</div>`;
   document.getElementById('forecastDisplay').innerHTML = "";
+  document.getElementById("topCities").style.display = "none";
 }
-
-async function fetchYoutube(city) {
-  const res = await fetch(`/api/youtube?city=${city}`);
-  const data = await res.json();
-
-  const videoSection = document.getElementById('youtubeVideos');
-  videoSection.innerHTML = data.map(video => `
-    <div class="video">
-      <a href="https://www.youtube.com/watch?v=${video.videoId}" target="_blank">
-        <img src="${video.thumbnail}" alt="${video.title}" />
-        <p>${video.title}</p>
-      </a>
-    </div>
-  `).join('');
-}
-

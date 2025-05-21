@@ -18,27 +18,52 @@ app.get('/', (req, res) => {
   `);
 });
 
-// 📡 Weather data route
+// 📡 Main weather API route
 app.get('/api/weather', async (req, res) => {
   const city = req.query.city;
+  if (!city) {
+    return res.status(400).json({ error: 'City name is required.' });
+  }
+
   try {
-    const response = await axios.get(
+    // Fetch current weather
+    const currentWeatherRes = await axios.get(
       `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`
     );
+    const weatherData = currentWeatherRes.data;
 
-    const weatherData = response.data;
+    // Fetch 5-day forecast
+    const forecastRes = await axios.get(
+      `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric`
+    );
 
+    // Filter every 8th item for daily forecast (3-hour intervals * 8 = 24 hrs)
+    const forecastData = forecastRes.data.list.filter((_, i) => i % 8 === 0).slice(0, 5);
+
+    const forecast = forecastData.map(item => ({
+      date: item.dt_txt,
+      temp: item.main.temp,
+      condition: capitalizeFirstLetter(item.weather[0].description),
+      icon: item.weather[0].icon
+    }));
+
+    // Final response
     res.json({
-  location: weatherData.name,
-  country: weatherData.sys.country,
-  temperature: weatherData.main.temp,
-  condition: capitalizeFirstLetter(weatherData.weather[0].description),
-  icon: weatherData.weather[0].icon,
-  timestamp: weatherData.dt,            
-  timezone: weatherData.timezone
-});
+      location: weatherData.name,
+      country: weatherData.sys.country,
+      temperature: weatherData.main.temp,
+      condition: capitalizeFirstLetter(weatherData.weather[0].description),
+      icon: weatherData.weather[0].icon,
+      timestamp: weatherData.dt,
+      timezone: weatherData.timezone,
+      forecast: forecast
+    });
   } catch (error) {
-    res.status(500).json({ error: 'Could not fetch weather data.' });
+    if (error.response && error.response.status === 404) {
+      res.status(404).json({ error: 'City not found. Please try again.' });
+    } else {
+      res.status(500).json({ error: 'Could not fetch weather data.' });
+    }
   }
 });
 

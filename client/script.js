@@ -52,6 +52,26 @@ document.getElementById('weatherForm').addEventListener('submit', async (e) => {
   }
 });
 
+async function fetchYouTubeVideos(city) {
+  try {
+    const res = await fetch(`https://app-jvpd.onrender.com/api/youtube?city=${city}`);
+    const videos = await res.json();
+
+    const container = document.getElementById("youtubeVideos");
+    container.innerHTML = videos.map(video => `
+      <div class="yt-video">
+        <a href="https://www.youtube.com/watch?v=${video.videoId}" target="_blank">
+          <img src="${video.thumbnail}" alt="${video.title}" />
+          <p>${video.title}</p>
+        </a>
+      </div>
+    `).join("");
+  } catch (err) {
+    console.error("YouTube fetch failed", err);
+  }
+}
+
+
 // 🌍 Detect user location and show weather
 window.onload = () => {
   if (navigator.geolocation) {

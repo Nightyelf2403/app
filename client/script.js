@@ -4,6 +4,7 @@ const citySuggestions = [
   "New York", "London", "Tokyo", "Paris", "Mumbai",
   "Dubai", "Sydney", "Berlin", "Singapore", "Moscow", "Chicago"
 ];
+const time = convertToLocalTime(data.date, data.timezone);
 
 // populate datalist for suggestions
 const suggestionList = document.getElementById("citySuggestions");

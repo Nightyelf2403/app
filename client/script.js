@@ -49,6 +49,8 @@ document.getElementById('weatherForm').addEventListener('submit', async (e) => {
   const city = cityInput.value.trim();
   if (city) {
     fetchWeather(city, true);
+    fetchYouTubeVideos(city);
+
   }
 });
 

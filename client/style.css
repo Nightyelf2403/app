@@ -172,5 +172,36 @@ button:hover {
   margin-bottom: 1.5rem;
 }
 
+.forecast-container {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.forecast-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.forecast-card {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 1rem;
+  border-radius: 12px;
+  color: #fff;
+  text-shadow: 1px 1px 3px #000;
+  backdrop-filter: blur(4px);
+  width: 120px;
+}
+
+.error-msg {
+  background: #ffe6e6;
+  color: #c00;
+  padding: 1rem;
+  border-radius: 8px;
+  margin: 1rem auto;
+  width: fit-content;
+  font-weight: bold;
+}
 
 

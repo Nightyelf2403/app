@@ -1,11 +1,13 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const WeatherRecordSchema = new mongoose.Schema({
-  location: String,
-  date: Date,
+  location: { type: String, required: true },
+  date: { type: Date, required: true },
   temperature: Number,
   condition: String,
-  notes: String // optional: for updates/annotations
-}, { timestamps: true });
+  notes: String
+}, {
+  timestamps: true
+});
 
 export default mongoose.model("WeatherRecord", WeatherRecordSchema);

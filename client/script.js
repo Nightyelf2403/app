@@ -66,26 +66,30 @@ window.onload = () => {
   loadTopCities();
 };
 
-// 🌦️ Fetch weather and display in card (NO TIME)
+// 🌦️ Fetch weather and display in card (with forecast)
 async function fetchWeather(city, updateMain = false) {
   try {
     const res = await fetch(`${backendURL}?city=${encodeURIComponent(city)}`);
     const data = await res.json();
 
+    if (data.error) {
+      showError(data.error);
+      return;
+    }
+
     const iconURL = `https://openweathermap.org/img/wn/${data.icon}@2x.png`;
     const imageURL = `https://source.unsplash.com/400x300/?city,${data.location}`;
 
     const html = `
-  <div class="weather-card" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('${imageURL}')">
-    <div class="overlay">
-      <h2>${data.location}</h2>
-      <img src="${iconURL}" alt="${data.condition}" />
-      <p>🌡️ <strong>${data.temperature} °C</strong></p>
-      <p>🌥️ <strong>${data.condition}</strong></p>
-    </div>
-  </div>
-`;
-
+      <div class="weather-card" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('${imageURL}')">
+        <div class="overlay">
+          <h2>${data.location}</h2>
+          <img src="${iconURL}" alt="${data.condition}" />
+          <p>🌡️ <strong>${data.temperature} °C</strong></p>
+          <p>🌥️ <strong>${data.condition}</strong></p>
+        </div>
+      </div>
+    `;
 
     if (updateMain) {
       document.getElementById('weatherDisplay').innerHTML = html;
@@ -97,8 +101,26 @@ async function fetchWeather(city, updateMain = false) {
       document.getElementById('topCities').appendChild(card);
     }
 
+    // 🌤️ Forecast display
+    if (updateMain && data.forecast && Array.isArray(data.forecast)) {
+      const forecastHTML = data.forecast.map(day => `
+        <div class="forecast-card">
+          <p><strong>${new Date(day.date).toLocaleDateString('en-US', { weekday: 'short' })}</strong></p>
+          <img src="https://openweathermap.org/img/wn/${day.icon}@2x.png" alt="${day.condition}" />
+          <p>${Math.round(day.temp)} °C</p>
+          <p>${day.condition}</p>
+        </div>
+      `).join("");
+
+      document.getElementById("forecastDisplay").innerHTML = `
+        <h3>5-Day Forecast</h3>
+        <div class="forecast-grid">${forecastHTML}</div>
+      `;
+    }
+
   } catch (error) {
     console.error("Weather fetch error:", error);
+    showError("❌ Unable to fetch weather. Please try again.");
   }
 }
 
@@ -111,3 +133,9 @@ function loadTopCities() {
 document.getElementById('themeToggle').addEventListener('change', () => {
   document.body.classList.toggle('dark');
 });
+
+// ❌ Error display
+function showError(message) {
+  document.getElementById('weatherDisplay').innerHTML = `<div class="error-msg">${message}</div>`;
+  document.getElementById('forecastDisplay').innerHTML = "";
+}

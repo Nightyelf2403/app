@@ -86,3 +86,42 @@ button:hover {
   padding: 0.8rem;
   font-size: 0.9rem;
 }
+
+
+@media screen and (max-width: 768px) {
+  .container {
+    padding: 1.2rem;
+    border-radius: 10px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  input[type="text"] {
+    width: 100%;
+  }
+
+  button {
+    width: 100%;
+  }
+
+  form {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .top-cities-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .card, .weather-card {
+    font-size: 0.85rem;
+  }
+
+  .weather-card img {
+    width: 40px;
+  }
+}

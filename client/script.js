@@ -66,13 +66,12 @@ window.onload = () => {
   loadTopCities();
 };
 
-// 🌦️ Fetch weather and display in card
+// 🌦️ Fetch weather and display in card (NO TIME)
 async function fetchWeather(city, updateMain = false) {
   try {
     const res = await fetch(`${backendURL}?city=${encodeURIComponent(city)}`);
     const data = await res.json();
 
-    const time = convertToLocalTimeFromUnix(data.timestamp, data.timezone);
     const iconURL = `https://openweathermap.org/img/wn/${data.icon}@2x.png`;
     const imageURL = `https://source.unsplash.com/400x300/?city,${data.location}`;
 
@@ -83,7 +82,6 @@ async function fetchWeather(city, updateMain = false) {
           <img src="${iconURL}" alt="${data.condition}" />
           <p><strong>Temperature:</strong> ${data.temperature} °C</p>
           <p><strong>Condition:</strong> ${data.condition}</p>
-          <p><strong>Time:</strong> ${time}</p>
         </div>
       </div>
     `;
@@ -103,22 +101,6 @@ async function fetchWeather(city, updateMain = false) {
   }
 }
 
-
-
-function convertToLocalTimeFromUnix(unixTime, timezoneOffset) {
-  const utcMillis = unixTime * 1000;
-  const localTime = new Date(utcMillis + timezoneOffset * 1000);
-  return localTime.toLocaleString('en-US', {
-    hour: 'numeric',
-    minute: 'numeric',
-    second: 'numeric',
-    hour12: true,
-    weekday: 'short',
-    day: 'numeric',
-    month: 'short'
-  });
-}
-
 // 🏙️ Load top 7 cities on page load
 function loadTopCities() {
   citySuggestions.slice(0, 7).forEach(city => fetchWeather(city, false));
@@ -128,4 +110,3 @@ function loadTopCities() {
 document.getElementById('themeToggle').addEventListener('change', () => {
   document.body.classList.toggle('dark');
 });
-

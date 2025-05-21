@@ -31,6 +31,7 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .toggle {
@@ -76,7 +77,6 @@ button:hover {
 .weather-card {
   background-size: cover;
   background-position: center;
-  border-radius: 16px;
   color: #fff;
   text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
   position: relative;
@@ -108,50 +108,18 @@ button:hover {
   color: var(--text);
 }
 
-.top-cities-grid {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-}
-
-@media (max-width: 600px) {
-  input[type="text"] {
-    width: 100%;
-    margin-bottom: 0.5rem;
-  }
-
-  form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  button {
-    width: 100%;
-  }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.footer {
-  margin-top: 2rem;
-  padding: 1rem;
-  text-align: right;
-  font-size: 0.95rem;
-  color: var(--text);
-  opacity: 0.7;
-  border-top: 1px solid #ccc;
-}
-
 .subtitle {
   font-size: 1rem;
   color: var(--text);
   opacity: 0.7;
   margin-top: -0.5rem;
   margin-bottom: 1.5rem;
+}
+
+.top-cities-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
 }
 
 .forecast-container {
@@ -164,6 +132,7 @@ button:hover {
   flex-wrap: wrap;
   justify-content: center;
   gap: 1rem;
+  margin-top: 1rem;
 }
 
 .forecast-card {
@@ -174,23 +143,18 @@ button:hover {
   text-shadow: 1px 1px 3px #000;
   backdrop-filter: blur(4px);
   width: 120px;
+  transition: transform 0.3s ease;
 }
 
-.error-msg {
-  background: #ffe6e6;
-  color: #c00;
-  padding: 1rem;
-  border-radius: 8px;
-  margin: 1rem auto;
-  width: fit-content;
-  font-weight: bold;
+.forecast-card:hover {
+  transform: scale(1.03);
 }
 
 .youtube-section {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-top: 20px;
+  margin-top: 2rem;
   justify-content: center;
 }
 
@@ -223,4 +187,63 @@ button:hover {
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.error-msg {
+  background: #ffe6e6;
+  color: #c00;
+  padding: 1rem;
+  border-radius: 8px;
+  margin: 1rem auto;
+  width: fit-content;
+  font-weight: bold;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  input[type="text"] {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  button {
+    width: 100%;
+  }
+
+  .forecast-card {
+    width: 100px;
+  }
+
+  .yt-video {
+    width: 140px;
+  }
+
+  .map-container {
+    height: 250px;
+  }
+
+  .app-container {
+    padding: 1rem;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.footer {
+  margin-top: 2rem;
+  padding: 1rem;
+  text-align: right;
+  font-size: 0.95rem;
+  color: var(--text);
+  opacity: 0.7;
+  border-top: 1px solid #ccc;
 }

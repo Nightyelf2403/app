@@ -1,6 +1,7 @@
 const backendURL = "https://app-jvpd.onrender.com/api/weather";
 const OPENWEATHER_API_KEY = "36ffc6ea6c048bb0fcc1752338facd48";
 const RAPIDAPI_KEY = "7f735282efmshce0eccb67be20bdp13e90cjsn552d58dcfa0e";
+const GOOGLE_MAPS_API_KEY = "AIzaSyAsMJvxZ0svpk_D5eSQqMeiap3_GLNPSoI";
 
 const citySuggestions = [
   "New York", "London", "Tokyo", "Paris", "Mumbai",
@@ -48,7 +49,7 @@ document.getElementById('weatherForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   const city = cityInput.value.trim();
   if (city) {
-    document.getElementById("topCities").style.display = "none"; // hide top cities
+    document.getElementById("topCities").style.display = "none";
     document.querySelector(".section-title").style.display = "none";
     document.querySelector(".subtitle").style.display = "none";
 
@@ -122,6 +123,21 @@ async function fetchWeather(city, updateMain = false) {
         <div class="forecast-grid">${forecastHTML}</div>
       `;
     }
+
+    // 🗺️ Load Google Map
+    const mapFrame = `
+      <iframe
+        width="100%"
+        height="100%"
+        style="border:0"
+        loading="lazy"
+        allowfullscreen
+        referrerpolicy="no-referrer-when-downgrade"
+        src="https://www.google.com/maps/embed/v1/place?key=${GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(data.location)}">
+      </iframe>
+    `;
+    document.getElementById("mapDisplay").innerHTML = mapFrame;
+    document.getElementById("mapDisplay").classList.remove("hidden");
 
   } catch (error) {
     console.error("Weather fetch error:", error);

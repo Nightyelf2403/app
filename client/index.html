@@ -1,51 +1,33 @@
-// ✅ index.html
+<!-- public/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>🌦️ Weather App</title>
+  <title>Weather App</title>
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
   <div class="app-container">
     <header>
-      <h1>🌤️ My Weather App</h1>
-      <label class="toggle">
-        <input type="checkbox" id="themeToggle" />
-        <span>🌙 Dark Mode</span>
-      </label>
+      <h1>🌤️ Weather App</h1>
+      <label><input type="checkbox" id="themeToggle"> Dark Mode</label>
     </header>
 
-    <!-- Weather Search Form -->
-    <form id="weatherForm" autocomplete="off">
+    <form id="weatherForm">
       <input list="citySuggestions" id="cityInput" placeholder="Search city..." required />
       <datalist id="citySuggestions"></datalist>
       <button type="submit">Get Weather</button>
     </form>
 
-    <!-- Main Weather Section -->
-    <main>
-      <section id="weatherDisplay" class="card hidden"></section>
-      <div id="forecastDisplay" class="forecast-container hidden"></div>
-      <div id="mapDisplay" class="map-container hidden"></div>
+    <section id="weatherDisplay" class="hidden"></section>
+    <section id="forecastDisplay" class="hidden"></section>
+    <section id="mapDisplay" class="hidden"></section>
+    <section id="youtubeVideos" class="hidden"></section>
 
-      <!-- YouTube Section -->
-      <div id="youtubeVideos" class="youtube-section hidden"></div>
-
-      <!-- Top Cities Container (hidden after search) -->
-      <div id="homepageTopCities">
-        <h2 class="section-title">🌍 Top Cities Weather</h2>
-        <p class="subtitle">Live conditions from around the world</p>
-        <section id="topCities" class="top-cities-grid"></section>
-      </div>
-    </main>
+    <h2>Top Cities Weather</h2>
+    <section id="topCities"></section>
   </div>
-
-  <!-- Footer -->
-  <footer class="footer">
-    Developed with ❤️ by <a href="https://github.com/Nightyelf2403" target="_blank"><strong>Lalith Aditya Chunduri</strong></a>
-  </footer>
 
   <script src="script.js"></script>
 </body>

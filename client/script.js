@@ -88,6 +88,9 @@ function loadTopCities() {
     card.onclick = () => showCityWeather(data.location);
     topCitiesSection.appendChild(card);
   });
+
+  // ✅ Show top cities on homepage load
+  document.getElementById("homepageTopCities").style.display = "block";
 }
 
 // 🌐 Show searched or clicked city
@@ -165,7 +168,9 @@ async function showCityWeather(city) {
     mapDisplay.classList.remove("hidden");
     youtubeSection.classList.remove("hidden");
     forecastDisplay.classList.remove("hidden");
-    topCitiesSection.innerHTML = ""; // hide homepage cities after search
+
+    // ✅ Hide homepage top cities after search
+    document.getElementById("homepageTopCities").style.display = "none";
 
   } catch (error) {
     console.error("Fetch failed:", error);

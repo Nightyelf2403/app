@@ -5,6 +5,9 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import weatherRoutes from './routes/api/records.js';
 import WeatherRecord from './models/WeatherRecord.js';
+import weatherRoute from './routes/api/weather.js';
+
+
 
 dotenv.config();
 
@@ -17,6 +20,7 @@ const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 app.use(cors());
 app.use(express.json());
 app.use('/api/records', weatherRoutes);
+app.use('/api/weather', weatherRoute);
 
 // 🌍 Root
 app.get('/', (req, res) => {

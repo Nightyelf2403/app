@@ -1,5 +1,6 @@
 // public/script.js
-const backend = "https://your-backend-url.onrender.com/api";
+const backend = "https://app-jvpd.onrender.com/api";
+
 
 document.getElementById("themeToggle").addEventListener("change", () => {
   document.body.classList.toggle("dark");

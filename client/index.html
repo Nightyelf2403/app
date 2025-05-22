@@ -16,26 +16,28 @@
       </label>
     </header>
 
-    <!-- Weather Search Form -->
+    <!-- Search -->
     <form id="weatherForm" autocomplete="off">
       <input list="citySuggestions" id="cityInput" placeholder="Search city..." required />
       <datalist id="citySuggestions"></datalist>
       <button type="submit">Get Weather</button>
     </form>
 
-    <!-- Main Weather Display -->
+    <!-- Main Output -->
     <section id="weatherDisplay" class="card hidden"></section>
-    <div id="hourlyDisplay" class="forecast-container"></div>
     <div id="forecastDisplay" class="forecast-container"></div>
+    <div id="hourlyDisplay" class="forecast-container"></div>
     <div id="mapDisplay" class="map-container hidden"></div>
-    <div id="youtubeVideos" class="youtube-section"></div>
 
     <!-- Top Cities -->
     <h2 class="section-title">🌍 Top Cities Weather</h2>
+    <p class="subtitle">Live conditions from around the world</p>
     <section id="topCities" class="top-cities-grid"></section>
+
+    <!-- YouTube Videos -->
+    <div id="youtubeVideos" class="youtube-section"></div>
   </div>
 
-  <!-- Footer -->
   <footer class="footer">
     Developed with ❤️ by <a href="https://github.com/Nightyelf2403" target="_blank"><strong>Lalith Aditya Chunduri</strong></a>
   </footer>

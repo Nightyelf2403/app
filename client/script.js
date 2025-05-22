@@ -1,12 +1,11 @@
 const backendURL = "https://app-jvpd.onrender.com/api/weather";
-const OPENWEATHER_API_KEY = "36ffc6ea6c048bb0fcc1752338facd48";
 const RAPIDAPI_KEY = "7f735282efmshce0eccb67be20bdp13e90cjsn552d58dcfa0e";
+const GOOGLE_MAPS_API_KEY = "AIzaSyAsMJvxZ0svpk_D5eSQqMeiap3_GLNPSoI";
 const citySuggestions = ["New York", "London", "Tokyo", "Paris", "Mumbai", "Dubai", "Sydney", "Berlin", "Singapore", "Moscow", "Chicago"];
 
 const cityInput = document.getElementById("cityInput");
 const datalist = document.getElementById("citySuggestions");
 
-// Autocomplete from GeoDB
 cityInput.addEventListener("input", async () => {
   const query = cityInput.value.trim();
   if (query.length < 2) return;
@@ -33,32 +32,20 @@ cityInput.addEventListener("input", async () => {
   }
 });
 
-// Handle form submission
 document.getElementById("weatherForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const city = cityInput.value.trim();
   if (city) fetchWeather(city, true);
 });
 
-// On load, show top cities
 window.onload = () => {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(async (pos) => {
-      const { latitude, longitude } = pos.coords;
-      const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${OPENWEATHER_API_KEY}`);
-      const data = await res.json();
-      fetchWeather(data.name, true);
-    });
-  }
   loadTopCities();
 };
 
-// Fetch and display weather
 async function fetchWeather(city, updateMain = false) {
   try {
     const res = await fetch(`${backendURL}?city=${encodeURIComponent(city)}`);
     const data = await res.json();
-
     if (data.error) return showError(data.error);
 
     const iconURL = `https://openweathermap.org/img/wn/${data.icon}@2x.png`;
@@ -87,7 +74,7 @@ async function fetchWeather(city, updateMain = false) {
       document.getElementById("topCities").appendChild(card);
     }
 
-    // Forecast (5-day)
+    // Forecast
     if (updateMain && data.forecast) {
       const forecastHTML = data.forecast.map(day => `
         <div class="forecast-card">
@@ -107,27 +94,20 @@ async function fetchWeather(city, updateMain = false) {
     fetchYouTubeVideos(data.location);
 
     // Map
-    const mapURL = `https://www.google.com/maps/embed/v1/place?key=AIzaSyAsMJvxZ0svpk_D5eSQqMeiap3_GLNPSoI&q=${encodeURIComponent(city)}`;
+    const mapURL = `https://www.google.com/maps/embed/v1/place?key=${GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(city)}`;
     document.getElementById("mapDisplay").innerHTML = `<iframe width="100%" height="100%" frameborder="0" src="${mapURL}" allowfullscreen></iframe>`;
     document.getElementById("mapDisplay").classList.remove("hidden");
 
   } catch (err) {
-    showError("Could not fetch weather.");
-    console.error("Weather fetch error:", err);
+    showError("❌ Could not fetch weather.");
+    console.error(err);
   }
 }
 
-// Load hourly forecast if supported later (placeholder)
-function displayHourlyForecast(data) {
-  document.getElementById("hourlyDisplay").innerHTML = "";
-}
-
-// Load top 6 cities
 function loadTopCities() {
   citySuggestions.slice(0, 6).forEach(city => fetchWeather(city, false));
 }
 
-// Fetch YouTube videos
 function fetchYouTubeVideos(city) {
   fetch(`https://app-jvpd.onrender.com/api/youtube?city=${encodeURIComponent(city)}`)
     .then(res => res.json())
@@ -146,12 +126,10 @@ function fetchYouTubeVideos(city) {
     });
 }
 
-// Dark mode toggle
 document.getElementById("themeToggle").addEventListener("change", () => {
   document.body.classList.toggle("dark");
 });
 
-// Show error
 function showError(msg) {
   document.getElementById("weatherDisplay").innerHTML = `<div class="error-msg">${msg}</div>`;
   document.getElementById("forecastDisplay").innerHTML = "";

@@ -51,12 +51,12 @@ document.getElementById("weatherForm").addEventListener("submit", async (e) => {
   }
 });
 
-// 🌓 Dark mode toggle
+// 🌗 Dark mode toggle
 document.getElementById("themeToggle").addEventListener("change", () => {
   document.body.classList.toggle("dark");
 });
 
-// 🏙️ Load homepage
+// 🏙️ Load homepage top cities
 window.onload = () => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(async (position) => {
@@ -69,7 +69,7 @@ window.onload = () => {
   loadTopCities();
 };
 
-// 🌆 Show top cities on homepage
+// 🔝 Load top cities (only on homepage)
 function loadTopCities() {
   topCitiesSection.innerHTML = "";
   citySuggestions.slice(0, 7).forEach(async city => {
@@ -90,7 +90,7 @@ function loadTopCities() {
   });
 }
 
-// 🌐 Show searched/tapped city weather
+// 🌐 Show searched or clicked city
 async function showCityWeather(city) {
   try {
     const res = await fetch(`${backendURL}?city=${encodeURIComponent(city)}`);
@@ -142,7 +142,7 @@ async function showCityWeather(city) {
       <div class="forecast-grid">${dailyHTML}</div>
     `;
 
-    // 🎥 YouTube Travel
+    // 🎥 YouTube Travel Videos
     const ytRes = await fetch(`${youtubeAPI}?city=${encodeURIComponent(city)}`);
     const ytData = await ytRes.json();
     youtubeSection.innerHTML = ytData.map(v => `
@@ -165,14 +165,15 @@ async function showCityWeather(city) {
     mapDisplay.classList.remove("hidden");
     youtubeSection.classList.remove("hidden");
     forecastDisplay.classList.remove("hidden");
-    topCitiesSection.innerHTML = ""; // hide top cities after search/tap
+    topCitiesSection.innerHTML = ""; // hide homepage cities after search
 
   } catch (error) {
     console.error("Fetch failed:", error);
-    showError("Unable to fetch weather. Try again.");
+    showError("❌ Unable to fetch weather. Try again.");
   }
 }
 
+// ❌ Error handler
 function showError(message) {
   weatherDisplay.innerHTML = `<div class="error-msg">${message}</div>`;
   forecastDisplay.innerHTML = "";

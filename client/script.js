@@ -1,6 +1,8 @@
 const backendURL = "https://app-jvpd.onrender.com/api/weather";
+const OPENWEATHER_API_KEY = "36ffc6ea6c048bb0fcc1752338facd48";
 const RAPIDAPI_KEY = "7f735282efmshce0eccb67be20bdp13e90cjsn552d58dcfa0e";
 const citySuggestions = ["New York", "London", "Tokyo", "Paris", "Mumbai", "Dubai", "Sydney", "Berlin", "Singapore", "Moscow", "Chicago"];
+
 const cityInput = document.getElementById("cityInput");
 const datalist = document.getElementById("citySuggestions");
 
@@ -8,6 +10,7 @@ const datalist = document.getElementById("citySuggestions");
 cityInput.addEventListener("input", async () => {
   const query = cityInput.value.trim();
   if (query.length < 2) return;
+
   const options = {
     method: 'GET',
     headers: {
@@ -15,6 +18,7 @@ cityInput.addEventListener("input", async () => {
       'X-RapidAPI-Host': 'wft-geo-db.p.rapidapi.com'
     }
   };
+
   try {
     const res = await fetch(`https://wft-geo-db.p.rapidapi.com/v1/geo/cities?namePrefix=${query}&limit=5&sort=-population`, options);
     const data = await res.json();
@@ -25,24 +29,23 @@ cityInput.addEventListener("input", async () => {
       datalist.appendChild(option);
     });
   } catch (err) {
-    console.error("Autocomplete error:", err);
+    console.error("GeoDB autocomplete error:", err);
   }
 });
 
-// Fetch & display weather from form
+// Handle form submission
 document.getElementById("weatherForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const city = cityInput.value.trim();
-  if (city) {
-    fetchWeather(city, true);
-  }
+  if (city) fetchWeather(city, true);
 });
 
+// On load, show top cities
 window.onload = () => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(async (pos) => {
       const { latitude, longitude } = pos.coords;
-      const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=36ffc6ea6c048bb0fcc1752338facd48`);
+      const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${OPENWEATHER_API_KEY}`);
       const data = await res.json();
       fetchWeather(data.name, true);
     });
@@ -50,17 +53,19 @@ window.onload = () => {
   loadTopCities();
 };
 
+// Fetch and display weather
 async function fetchWeather(city, updateMain = false) {
   try {
     const res = await fetch(`${backendURL}?city=${encodeURIComponent(city)}`);
     const data = await res.json();
+
     if (data.error) return showError(data.error);
 
     const iconURL = `https://openweathermap.org/img/wn/${data.icon}@2x.png`;
     const imageURL = `https://source.unsplash.com/400x300/?${data.location}`;
 
     const html = `
-      <div class="weather-card" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.7)), url('${imageURL}')">
+      <div class="weather-card" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url('${imageURL}')">
         <div class="overlay">
           <h2>${data.location}</h2>
           <img src="${iconURL}" alt="${data.condition}" />
@@ -82,7 +87,7 @@ async function fetchWeather(city, updateMain = false) {
       document.getElementById("topCities").appendChild(card);
     }
 
-    // Forecast
+    // Forecast (5-day)
     if (updateMain && data.forecast) {
       const forecastHTML = data.forecast.map(day => `
         <div class="forecast-card">
@@ -112,17 +117,17 @@ async function fetchWeather(city, updateMain = false) {
   }
 }
 
-function showError(msg) {
-  document.getElementById("weatherDisplay").innerHTML = `<div class="error-msg">${msg}</div>`;
-  document.getElementById("forecastDisplay").innerHTML = "";
+// Load hourly forecast if supported later (placeholder)
+function displayHourlyForecast(data) {
   document.getElementById("hourlyDisplay").innerHTML = "";
-  document.getElementById("mapDisplay").classList.add("hidden");
 }
 
+// Load top 6 cities
 function loadTopCities() {
   citySuggestions.slice(0, 6).forEach(city => fetchWeather(city, false));
 }
 
+// Fetch YouTube videos
 function fetchYouTubeVideos(city) {
   fetch(`https://app-jvpd.onrender.com/api/youtube?city=${encodeURIComponent(city)}`)
     .then(res => res.json())
@@ -141,6 +146,16 @@ function fetchYouTubeVideos(city) {
     });
 }
 
+// Dark mode toggle
 document.getElementById("themeToggle").addEventListener("change", () => {
   document.body.classList.toggle("dark");
 });
+
+// Show error
+function showError(msg) {
+  document.getElementById("weatherDisplay").innerHTML = `<div class="error-msg">${msg}</div>`;
+  document.getElementById("forecastDisplay").innerHTML = "";
+  document.getElementById("hourlyDisplay").innerHTML = "";
+  document.getElementById("mapDisplay").classList.add("hidden");
+  document.getElementById("youtubeVideos").innerHTML = "";
+}

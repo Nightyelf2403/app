@@ -1,32 +1,39 @@
-import { google } from 'googleapis';
+import express from 'express';
+import axios from 'axios';
 
+const router = express.Router();
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 
-app.get('/api/youtube', async (req, res) => {
+// Route: GET /api/youtube?city=Paris
+router.get('/', async (req, res) => {
   const city = req.query.city;
-  if (!city) return res.status(400).json({ error: 'City name required' });
+  if (!city) {
+    return res.status(400).json({ error: 'City is required' });
+  }
 
   try {
-    const youtube = google.youtube({
-      version: 'v3',
-      auth: YOUTUBE_API_KEY
-    });
-
-    const response = await youtube.search.list({
-      q: `${city} travel`,
-      part: 'snippet',
-      maxResults: 2,
-      type: 'video',
+    const response = await axios.get('https://www.googleapis.com/youtube/v3/search', {
+      params: {
+        part: 'snippet',
+        q: `${city} travel guide`,
+        maxResults: 5,
+        type: 'video',
+        key: YOUTUBE_API_KEY,
+      }
     });
 
     const videos = response.data.items.map(item => ({
       title: item.snippet.title,
       videoId: item.id.videoId,
-      thumbnail: item.snippet.thumbnails.medium.url
+      thumbnail: item.snippet.thumbnails.high.url,
+      channelTitle: item.snippet.channelTitle
     }));
 
-    res.json(videos);
-  } catch (err) {
-    res.status(500).json({ error: 'YouTube API failed' });
+    res.json({ city, videos });
+  } catch (error) {
+    console.error('YouTube API Error:', error?.response?.data || error.message);
+    res.status(500).json({ error: 'Failed to fetch YouTube videos' });
   }
 });
+
+export default router;
